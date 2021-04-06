@@ -4,7 +4,6 @@ import {LocalStorage} from 'quasar'
 import setAxiosHeaders from './helpers'
 
 export function init ({state}) {  
-  console.log('INIT', state)
   setAxiosHeaders(state)
 }
 

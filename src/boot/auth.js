@@ -2,7 +2,6 @@ export default ({app, router, Vue}) => {
 
     // Check for protected and guest routes and perform checks
     router.beforeEach((to, from, next) => {
-      console.log('NA ROTA')
       const protectedRoute = to.matched.some(route => route.meta.auth)
   
       // Allow guest routes
@@ -10,11 +9,11 @@ export default ({app, router, Vue}) => {
   
       // If auth is required and the user is logged in, verify the token...
       if (app.store.getters['session/isAuthenticated']) {
-          next()
+         // next()
   
-        // return app.store.dispatch('session/validate').then(user => {
-        //   user ? next() : next({name: 'login'})
-        // })
+        return app.store.dispatch('session/validate').then(user => {
+          user ? next() : next({name: 'login'})
+        })
   
       }
   

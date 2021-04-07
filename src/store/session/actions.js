@@ -30,6 +30,7 @@ export function validate ({commit, state}) {
   return axios.get('auth/login')
     .then(response => {      
       const user = response.data.user 
+      console.log('VALIDATE:', response.data.user)
       commit('LOGIN', user)
       return user
     }).catch(error => {

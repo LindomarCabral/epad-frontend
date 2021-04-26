@@ -1,8 +1,8 @@
 {
-  "name": "condominio-frontend",
+  "name": "epad-frontend",
   "version": "0.0.1",
-  "description": "A Quasar Framework app",
-  "productName": "Quasar App",
+  "description": "E-PAD - Electronic Process Administrative Disciplinary",
+  "productName": "epad",
   "author": "LindomarCabral <lindomar.tecno@gmail.com>",
   "private": true,
   "scripts": {

@@ -3,6 +3,7 @@ export default ({app, router, Vue}) => {
     // Check for protected and guest routes and perform checks
     router.beforeEach((to, from, next) => {
       const protectedRoute = to.matched.some(route => route.meta.auth)
+
   
       // Allow guest routes
       if (!protectedRoute) return next()

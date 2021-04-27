@@ -2,7 +2,7 @@
   <q-page class="q-pa-sm">
     <q-card>
       <q-table
-        title="Usuários"
+        :title="title"
         :data="data"
         :hide-header="mode === 'grid'"
         :columns="columns"
@@ -12,6 +12,8 @@
         :pagination.sync="pagination"
       >
         <template v-slot:top-right="props">
+          <q-btn @click="new_user=true ; acao = 'new'; user = {} " outline color="primary" label="Novo Usuário" class="q-mr-xs"/>
+
           <q-input outlined dense debounce="300" v-model="filter" placeholder="Search">
             <template v-slot:append>
               <q-icon name="search"/>
@@ -55,37 +57,82 @@
             no-caps
             @click="exportTable"
           />
-        </template>
-        <template v-slot:body-cell-stage="props">
-          <q-td :props="props">
-            <q-chip
-              :color="(props.row.stage == 'Draft')?'green':(props.row.stage == 'Cheques'?'orange':'secondary')"
-              text-color="white"
-              dense
-              class="text-weight-bolder"
-              square
-              style="width: 85px"
-            >{{props.row.stage}}
-            </q-chip>
-          </q-td>
-        </template>
+        </template>        
+
         <template v-slot:body-cell-action="props">
           <q-td :props="props">
             <div class="q-gutter-sm">
-              <q-btn dense color="primary" icon="edit"/>
-              <q-btn dense color="red" icon="delete"/>
+              <q-btn dense color="primary" icon="edit" @click="loadUser(props.row.id)"/>
+              <q-btn dense color="red" icon="delete" @click="remove(props.row.id)"/>             
             </div>
           </q-td>
         </template>
+
       </q-table>
     </q-card>
+
+      <q-dialog v-model="new_user">
+      <q-card style="width: 600px; max-width: 60vw;">
+        <q-card-section>
+          <div class="text-h6">
+            Adicionar Novo Usuário
+            <q-btn round flat dense icon="close" class="float-right" color="grey-8" v-close-popup></q-btn>
+          </div>
+        </q-card-section>
+        <q-separator inset></q-separator>
+        <q-card-section class="q-pt-none">
+          <q-form class="q-gutter-md">
+            <q-list>
+              <q-item>
+                <q-item-section>
+                  <q-item-label class="q-pb-xs">Nome</q-item-label>
+                  <q-input dense outlined v-model="user.username" label="Nome"/>
+                </q-item-section>
+              </q-item>
+              <q-item>
+                <q-item-section v-if="acao === 'new'">
+                  <q-item-label class="q-pb-xs">E-mail</q-item-label>
+                  <q-input dense outlined v-model="user.email" label="e-mail"/>
+                </q-item-section>
+              </q-item>
+
+              <q-item>
+                <q-item-section>
+                  <q-item-label class="q-pb-xs">CPF</q-item-label>
+                  <q-input dense outlined v-model="user.cpf" label="cpf"/>
+                </q-item-section>
+              </q-item>
+
+              <q-item>
+                <q-item-section>
+                  <q-item-label class="q-pb-xs" type="pass">Senha</q-item-label>
+                  <q-input dense outlined v-model="user.password" label="senha" type="password"/>
+                </q-item-section>
+              </q-item>
+
+            </q-list>
+          </q-form>
+        </q-card-section>
+
+        <q-card-actions align="right" class="text-teal">
+
+          <q-btn label="Salvar" type="submit" color="primary" v-if="acao === 'new'" @click="save" v-close-popup/>
+          <q-btn label="Alterar" type="submit" color="primary" v-else @click="alterar" v-close-popup/>
+
+        </q-card-actions>
+
+      </q-card>
+    </q-dialog>
+
+    
+
   </q-page>
 </template>
 
 <script>
-    import {exportFile} from "quasar"
-    
-   
+    import {exportFile} from "quasar";
+    import axios from 'axios'
+
     function wrapCsvValue(val, formatFn) {
         let formatted = formatFn !== void 0 ? formatFn(val) : val;
 
@@ -99,16 +146,20 @@
 
     export default {
         data() {
-            return {                
+            return {
                 filter: "",
+                user: {},
+                new_user: false,
                 mode: "list",
+                acao: "",
                 invoice: {},
                 employee_dialog: false,
+                title:"Usuários",
                 columns: [
                     {
-                        name: "id",
+                        name: "ID",
                         align: "left",
-                        label: "id",
+                        label: "ID",
                         field: "id",
                         sortable: true
                     },
@@ -120,60 +171,37 @@
                         sortable: true
                     },
                     {
-                        name: "email",
-                        required: true,
-                        label: "E-mail",
-                        align: "left",
-                        field: "email",
-                        sortable: true
-                    },
-                    {
                         name: "cpf",
-                        align: "left",
+                        required: true,
                         label: "CPF",
+                        align: "left",
                         field: "cpf",
                         sortable: true
                     },                    
                     {
-                        name: "stage",
+                        name: "email",
                         align: "left",
-                        label: "Stage",
-                        field: "stage",
+                        label: "E-mail",
+                        field: "email",
                         sortable: true
                     },
+                    
                     {
                         name: "action",
                         align: "left",
-                        label: "Action",
+                        label: "Ação",
                         field: "action",
                         sortable: true
                     }
                 ],
-                data: [
-                    {
-                        id: "01",
-                        subject_name: "Design",
-                        username: "Leslie Tecklenburg",
-                        email: "teste@teste",
-                        cpf: "111111111",                        
-                        stage: "Draft",
-                    },
-                    {
-                        id: "02",
-                        subject_name: "Networking",
-                        username: "Lia Whitledge",
-                        email: "teste@teste",
-                        cpf: "222222222",                        
-                        stage: "Cheques",
-                    }
-                ],
+                data: [],
                 pagination: {
                     rowsPerPage: 10
                 }
             };
         },
         mounted () {          
-       //   this.getUsers()
+          this.getUsers()
         },
         methods: {
             exportTable() {
@@ -205,11 +233,48 @@
                     });
                 }
             },
-            async getUsers() {              
-              await api.get('/admin/users').then((res) => {              
-                this.data = res.data
-              }).catch((err) => {
-                console.log(err)
+            async getUsers() {
+                axios.get('admin/users')
+                .then(response => {                                    
+                    this.data = response.data.data         
+                }).catch(error => {
+                    console.log(error)
+                })
+            },
+            save(){             
+              axios.post('admin/users', this.user)
+              .then(response => {                    
+                    this.getUsers()                                              
+                }).catch(error => {
+                    console.log(error)
+                })
+            },
+            loadUser(id){
+               axios.get(`admin/users/${id}`)
+              .then(response => {                 
+                  this.user = response.data
+                  this.new_user = true
+                  this.acao = 'update'
+              }).catch(error => {
+                  console.log(error)
+              })
+            },
+            alterar(){             
+               const id = this.user.id 
+               console.log('USER:', user)      
+               axios.put(`admin/users/${id}`, this.user)
+              .then(response => {                     
+                    this.getUsers()                                              
+                }).catch(error => {
+                    console.log(error)
+                })
+            },
+            remove(id){             
+              axios.delete(`admin/users/${id}`)
+              .then(response => {
+                  this.getUsers() 
+              }).catch(error => {
+                  console.log(error)
               })
             }
         }

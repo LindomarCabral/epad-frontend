@@ -17,7 +17,7 @@
         <!--            <img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg">-->
         <!--          </q-avatar>-->
 
-        <q-toolbar-title>SGC</q-toolbar-title>
+        <q-toolbar-title>E-pad</q-toolbar-title>
         <q-btn
           class="q-mr-xs"
           flat
@@ -70,6 +70,23 @@
 
               <q-item
                 active-class="tab-active"
+                to="/home"
+                exact
+                class="q-ma-sm navigation-item"
+                clickable
+                v-ripple
+              >
+                <q-item-section avatar>
+                  <q-icon name="home" />
+                </q-item-section>
+
+                <q-item-section>
+                  Home
+                </q-item-section>
+              </q-item>
+
+              <q-item
+                active-class="tab-active"
                 to="/users"
                 exact
                 class="q-ma-sm navigation-item"
@@ -83,24 +100,8 @@
                 <q-item-section>
                   Usuarios
                 </q-item-section>
-              </q-item>
+              </q-item>              
 
-              <q-item
-                active-class="tab-active"
-                to="/quotes"
-                exact
-                class="q-ma-sm navigation-item"
-                clickable
-                v-ripple
-              >
-                <q-item-section avatar>
-                  <q-icon name="list" />
-                </q-item-section>
-
-                <q-item-section>
-                  Quotes
-                </q-item-section>
-              </q-item>
 
               <q-item
                 active-class="tab-active"

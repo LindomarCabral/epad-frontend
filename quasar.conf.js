@@ -55,7 +55,7 @@ module.exports = function (ctx) {
         }
         : {
           // dev env vars here, for example:
-          API_HOST: JSON.stringify(process.env.API_HOST || 'http://191.252.193.209:3333/v1')
+          API_HOST: JSON.stringify(process.env.API_HOST || 'http://127.0.0.1:3333/v1')
         },
       scopeHoisting: true,
       vueRouterMode: 'history',
